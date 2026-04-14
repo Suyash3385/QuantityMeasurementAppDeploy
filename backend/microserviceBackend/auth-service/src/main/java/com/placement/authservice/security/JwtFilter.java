@@ -23,8 +23,10 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // ✅ Skip auth endpoints
-        if (request.getServletPath().startsWith("/auth")) {
+        // ✅ Skip auth + actuator endpoints
+        String path = request.getServletPath();
+
+        if (path.startsWith("/auth") || path.startsWith("/actuator")) {
             filterChain.doFilter(request, response);
             return;
         }
