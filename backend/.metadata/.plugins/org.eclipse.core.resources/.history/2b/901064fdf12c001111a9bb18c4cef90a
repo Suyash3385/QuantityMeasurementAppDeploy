@@ -1,0 +1,102 @@
+# =============================================================
+# Quantity Measurement Application - Base / Development Configuration
+# Default active profile: prod
+# To run in dev mode: --spring.profiles.active=dev
+# To run tests:       --spring.profiles.active=test
+#
+# No .env file or spring-dotenv is used. Values are either:
+#   - Hardcoded here (dev / non-sensitive defaults)
+#   - Overridden by OS environment variables in prod (see application-prod.properties)
+# =============================================================
+
+spring.application.name=quantity-measurement-app
+spring.profiles.active=prod
+server.port=8081
+
+# =============================================================
+# H2 In-Memory Database (used by the dev and test profiles)
+# Overridden by application-prod.properties for MySQL
+# =============================================================
+spring.datasource.url=jdbc:h2:mem:quantitymeasurementdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+
+# =============================================================
+# Spring Data JPA / Hibernate
+# =============================================================
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+
+# =============================================================
+# H2 Console
+# Access: http://localhost:8080/h2-console
+# JDBC URL: jdbc:h2:mem:quantitymeasurementdb  |  User: sa  |  Password: (blank)
+# =============================================================
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
+spring.h2.console.settings.web-allow-others=false
+
+# =============================================================
+# HikariCP Connection Pool
+# =============================================================
+spring.datasource.hikari.pool-name=QuantityMeasurementPool
+spring.datasource.hikari.maximum-pool-size=10
+spring.datasource.hikari.minimum-idle=2
+spring.datasource.hikari.connection-timeout=30000
+spring.datasource.hikari.idle-timeout=600000
+spring.datasource.hikari.max-lifetime=1800000
+
+# =============================================================
+# Logging
+# =============================================================
+logging.level.root=INFO
+logging.level.com.app.quantitymeasurement=DEBUG
+logging.level.org.springframework.web=DEBUG
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+
+# =============================================================
+# Swagger / OpenAPI
+# =============================================================
+springdoc.api-docs.path=/v3/api-docs
+springdoc.swagger-ui.path=/swagger-ui.html
+springdoc.swagger-ui.enabled=true
+
+# =============================================================
+# Spring Boot Actuator
+# =============================================================
+management.endpoints.web.exposure.include=health,info,metrics
+management.endpoint.health.show-details=always
+management.info.env.enabled=true
+info.app.name=Quantity Measurement App
+info.app.version=17.0
+info.app.description=Spring Boot REST API for quantity measurement operations
+
+# =============================================================
+# Spring Mail / SMTP — UC19 (Email Notifications)
+# Uses Gmail SMTP with App Password (TLS on port 587).
+# IMPORTANT: Replace the username and password with your own.
+#   1. Go to your Google Account → Security → App Passwords
+#   2. Generate a password for "Mail / Windows Computer"
+#   3. Paste it below (no spaces)
+# In production, inject these as environment variables instead
+# of hardcoding them here.
+# =============================================================
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=${MAIL_USERNAME}
+spring.mail.password=${MAIL_PASSWORD}
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+spring.mail.properties.mail.smtp.ssl.protocols=TLSv1.2
+
+# =============================================================
+# Async execution (required for @Async in EmailService)
+# =============================================================
+spring.task.execution.pool.core-size=2
+spring.task.execution.pool.max-size=5
+spring.task.execution.pool.queue-capacity=100

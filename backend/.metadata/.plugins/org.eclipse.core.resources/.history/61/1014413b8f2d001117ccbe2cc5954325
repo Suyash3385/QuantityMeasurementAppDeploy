@@ -1,0 +1,42 @@
+# =============================================================
+# Test runner configuration
+# Overrides the base application.properties for all test runs.
+# Uses isolated H2 in-memory database - no external dependencies.
+# =============================================================
+
+spring.datasource.url=jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=create-drop
+spring.jpa.show-sql=false
+
+spring.h2.console.enabled=false
+
+logging.level.root=WARN
+logging.level.com.app.quantitymeasurement=INFO
+logging.level.org.hibernate.SQL=WARN
+
+springdoc.swagger-ui.enabled=true
+
+management.endpoints.web.exposure.include=health,info,metrics
+management.endpoint.health.show-details=always
+
+# Stub Google OAuth2 so context loads without real credentials
+spring.security.oauth2.client.registration.google.client-id=test-client-id
+spring.security.oauth2.client.registration.google.client-secret=test-client-secret
+spring.security.oauth2.client.registration.google.scope=email,profile
+
+# Stub GitHub OAuth2 - required once github registration is present in
+# application.properties; without it the application context fails to start.
+spring.security.oauth2.client.registration.github.client-id=test-github-client-id
+spring.security.oauth2.client.registration.github.client-secret=test-github-client-secret
+spring.security.oauth2.client.registration.github.scope=read:user,user:email
+
+# Fixed test JWT secret - safe to commit, test-only
+app.jwt.secret=dGhpcyBpcyBhIHZlcnkgc2VjdXJlIGp3dCBzZWNyZXQga2V5IGZvciBkZXZlbG9wbWVudA==
+app.jwt.expiration-ms=86400000
+
+app.oauth2.redirect-uri=http://localhost:8080/swagger-ui.html
