@@ -1,8 +1,10 @@
 package com.placement.authservice.security;
 
 import com.placement.authservice.util.JwtUtil;
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,10 +25,16 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // ✅ Skip auth + actuator endpoints
-        String path = request.getServletPath();
+        // 🔥 FINAL FIX: skip actuator ALWAYS
+        String path = request.getRequestURI();
 
-        if (path.startsWith("/auth") || path.startsWith("/actuator")) {
+        if (path.contains("/actuator")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // (optional) also skip auth endpoints
+        if (path.contains("/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
